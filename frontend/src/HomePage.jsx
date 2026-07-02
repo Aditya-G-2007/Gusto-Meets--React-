@@ -2,12 +2,9 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Sidebar from './Sidebar';
 import { supabase } from './supabaseClient'; 
-import { Search, MapPin, Users, PlusCircle, ChevronDown, Check,Star} from 'lucide-react'; 
+import { Search, MapPin, Users, PlusCircle, ChevronDown, Check, Star} from 'lucide-react'; 
 
-// Pre-defined cities based on your UI reference
 const CITIES = ["Chennai", "Bangalore", "Mumbai", "Delhi", "Hyderabad"];
-
-// Categories mapped directly to your terrace_permissions schema
 const CATEGORIES = [
   { id: 'all', label: "All Spaces" },
   { id: 'couples', label: "Couples Allowed" },
@@ -16,24 +13,22 @@ const CATEGORIES = [
   { id: 'overnight', label: "Overnight Stays" }
 ];
 
+const CARD_COLORS = ['bg-neo-green', 'bg-neo-pink', 'bg-neo-yellow', 'bg-neo-blue'];
+
 export default function HomePage() {
   const navigate = useNavigate();
   
-  // Data State
   const [allSpaces, setAllSpaces] = useState([]);
   const [displayedSpaces, setDisplayedSpaces] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // Filter State
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCity, setSelectedCity] = useState('Chennai');
   const [selectedCategory, setSelectedCategory] = useState('all');
   
-  // UI State
   const [isLocationOpen, setIsLocationOpen] = useState(false);
   const dropdownRef = useRef(null);
 
-  // Fetch all active spaces on load
   useEffect(() => {
     const fetchSpaces = async () => {
       const { data, error } = await supabase
@@ -57,18 +52,15 @@ export default function HomePage() {
     fetchSpaces();
   }, []);
 
-  // Filter Engine: Runs whenever data, search, city, or category changes
   useEffect(() => {
     let filtered = [...allSpaces];
 
-    // 1. Filter by City
     if (selectedCity) {
       filtered = filtered.filter(space => 
         space.city?.toLowerCase() === selectedCity.toLowerCase()
       );
     }
 
-    // 2. Filter by Search Query (Title or Address)
     if (searchQuery.trim() !== '') {
       const lowerQuery = searchQuery.toLowerCase();
       filtered = filtered.filter(space => 
@@ -77,7 +69,6 @@ export default function HomePage() {
       );
     }
 
-    // 3. Filter by Schema Category (Permissions)
     if (selectedCategory !== 'all') {
       filtered = filtered.filter(space => {
         const perms = space.terrace_permissions?.[0] || {};
@@ -94,7 +85,6 @@ export default function HomePage() {
     setDisplayedSpaces(filtered);
   }, [allSpaces, searchQuery, selectedCity, selectedCategory]);
 
-  // Handle clicking outside the location dropdown to close it
   useEffect(() => {
     function handleClickOutside(event) {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
@@ -106,23 +96,23 @@ export default function HomePage() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-[#0e1a12] flex font-sans">
+    <div className="min-h-screen bg-neo-bg flex font-inter text-black">
       <Sidebar />
 
-      <main className="flex-1 ml-64 p-8 lg:p-12 text-white">
+      <main className="flex-1 ml-64 p-8 lg:p-12">
         
         {/* Top Header Section */}
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
           <div>
-            <h1 className="text-3xl font-semibold mb-1 text-white tracking-tight">Explore Terraces</h1>
-            <p className="text-[#9ca89e] text-sm">Find the perfect urban oasis for your next event.</p>
+            <h1 className="font-jakarta font-extrabold text-[32px] tracking-tight text-black mb-1">Explore Terraces</h1>
+            <p className="font-inter font-semibold text-gray-600 text-sm">Find the perfect urban oasis for your next event.</p>
           </div>
 
           {/* Action Buttons */}
           <div className="flex items-center gap-3">
-            {/* List Your Terrace Button */}
-            <button className="flex items-center gap-2 px-4 py-2.5 rounded-xl border border-[#2e5a38] text-[#4ade80] hover:bg-[#1e3a28] transition-colors text-sm font-medium">
-              <PlusCircle size={16} />
+            {/* List Your Terrace Button - Now GREEN */}
+            <button className="flex items-center gap-2 px-5 py-2.5 rounded-xl border-3 border-black bg-neo-green shadow-neo active:translate-y-1 active:translate-x-1 active:shadow-none transition-all text-sm font-lexend font-bold text-black">
+              <PlusCircle size={18} strokeWidth={2.5} />
               List Your Terrace
             </button>
 
@@ -130,17 +120,17 @@ export default function HomePage() {
             <div className="relative" ref={dropdownRef}>
               <button 
                 onClick={() => setIsLocationOpen(!isLocationOpen)}
-                className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#1e3a28] hover:bg-[#2a4f32] text-gray-200 transition-colors text-sm font-medium border border-[#2e5a38]"
+                className="flex items-center gap-2 px-5 py-2.5 rounded-xl border-3 border-black bg-neo-green shadow-neo active:translate-y-1 active:translate-x-1 active:shadow-none transition-all text-sm font-lexend font-bold text-black"
               >
                 {selectedCity}
-                <ChevronDown size={16} className={`transition-transform ${isLocationOpen ? 'rotate-180' : ''}`} />
+                <ChevronDown size={18} strokeWidth={2.5} className={`transition-transform ${isLocationOpen ? 'rotate-180' : ''}`} />
               </button>
 
-              {/* Dropdown Menu */}
+              {/* Dropdown Menu - Now GREEN */}
               {isLocationOpen && (
-                <div className="absolute right-0 mt-2 w-48 bg-[#141f17] border border-[#2e5a38] rounded-xl shadow-2xl py-2 z-50">
-                  <div className="px-3 py-1 mb-1">
-                    <span className="text-[10px] font-bold uppercase tracking-wider text-[#6b7c6e]">Select City</span>
+                <div className="absolute right-0 mt-3 w-48 bg-neo-green border-3 border-black rounded-xl shadow-neo-lg py-2 z-50 overflow-hidden">
+                  <div className="px-3 py-1 mb-1 border-b-2 border-black/20">
+                    <span className="text-[10px] font-lexend font-bold uppercase tracking-wider text-black">Select City</span>
                   </div>
                   {CITIES.map(city => (
                     <button
@@ -149,10 +139,10 @@ export default function HomePage() {
                         setSelectedCity(city);
                         setIsLocationOpen(false);
                       }}
-                      className="w-full text-left px-4 py-2.5 text-sm hover:bg-[#1e3a28] flex items-center justify-between transition-colors"
+                      className="w-full text-left px-4 py-2.5 text-sm hover:bg-black hover:text-neo-green flex items-center justify-between transition-colors font-inter font-bold text-black"
                     >
-                      <span className={selectedCity === city ? "text-[#4ade80]" : "text-gray-300"}>{city}</span>
-                      {selectedCity === city && <Check size={14} className="text-[#4ade80]" />}
+                      <span>{city}</span>
+                      {selectedCity === city && <Check size={16} strokeWidth={3} />}
                     </button>
                   ))}
                 </div>
@@ -162,29 +152,29 @@ export default function HomePage() {
         </div>
 
         {/* Wide Search Bar */}
-        <div className="bg-[#141f17] border border-[#1e3a28] rounded-xl flex items-center p-3.5 mb-6 shadow-sm w-full transition-colors focus-within:border-[#4ade80]">
-          <Search className="text-[#6b7c6e] w-5 h-5 ml-2 mr-3" />
+        <div className="bg-neo-surface border-3 border-black rounded-xl flex items-center p-2 mb-6 shadow-neo w-full focus-within:translate-y-[1px] focus-within:translate-x-[1px] focus-within:shadow-neo-sm transition-all">
+          <Search className="text-black w-5 h-5 ml-3 mr-3" strokeWidth={2.5} />
           <input 
             type="text" 
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Search spaces by name, landmark, or area..." 
-            className="bg-transparent border-none outline-none text-sm w-full text-white placeholder:text-[#6b7c6e]"
+            className="bg-transparent border-none outline-none text-sm w-full font-inter font-semibold text-black placeholder:text-gray-500 placeholder:font-medium py-2"
           />
         </div>
 
-        {/* Dynamic Categories / Filters */}
-        <div className="flex gap-3 mb-10 overflow-x-auto scrollbar-hide pb-2">
+        {/* Dynamic Categories / Filters - Now ALL GREEN */}
+        <div className="flex gap-3 mb-10 overflow-x-auto no-scrollbar pb-2">
           {CATEGORIES.map((cat) => {
             const isActive = selectedCategory === cat.id;
             return (
               <button 
                 key={cat.id} 
                 onClick={() => setSelectedCategory(cat.id)}
-                className={`whitespace-nowrap px-5 py-2 rounded-full text-sm font-medium transition-all ${
+                className={`whitespace-nowrap px-6 py-2 rounded-full text-sm font-lexend font-bold transition-all border-3 border-black shadow-neo-sm active:translate-y-1 active:shadow-none ${
                   isActive 
-                    ? 'bg-[#4ade80] text-[#0e1a12] border border-[#4ade80]' 
-                    : 'bg-[#141f17] border border-[#1e3a28] text-gray-300 hover:border-[#4ade80]/50 hover:text-white'
+                    ? 'bg-black text-neo-green' // Active is inverted to stand out among all the green
+                    : 'bg-neo-green text-black hover:bg-neo-yellow'
                 }`}
               >
                 {cat.label}
@@ -195,62 +185,72 @@ export default function HomePage() {
 
         {/* Grid Display */}
         {loading ? (
-          <div className="text-[#6b7c6e] flex items-center justify-center py-20">Loading spaces...</div>
+          <div className="font-jakarta font-bold text-xl flex items-center justify-center py-20 text-black">
+             <svg className="w-8 h-8 text-neo-green animate-spin mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+            Loading spaces...
+          </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-6">
             
             {displayedSpaces.length === 0 ? (
-              <div className="col-span-full py-20 text-center border border-dashed border-[#1e3a28] rounded-2xl bg-[#141f17]/50">
-                <p className="text-gray-400">No spaces found matching your search in {selectedCity}.</p>
+              <div className="col-span-full py-20 text-center border-3 border-black rounded-2xl bg-neo-surface shadow-neo">
+                <p className="font-jakarta font-bold text-lg text-black">No spaces found matching your search in {selectedCity}.</p>
                 <button 
                   onClick={() => { setSearchQuery(''); setSelectedCategory('all'); }} 
-                  className="mt-4 text-[#4ade80] text-sm hover:underline"
+                  className="mt-4 bg-neo-green border-2 border-black rounded-lg px-4 py-2 font-lexend font-bold text-sm shadow-neo-sm active:translate-y-1 active:translate-x-1 active:shadow-none transition-all text-black"
                 >
                   Clear filters
                 </button>
               </div>
             ) : (
-              displayedSpaces.map((space) => {
+              displayedSpaces.map((space, index) => {
                 const rate = space.terrace_rates?.[0]?.rate || "N/A";
-                // Try to find the cover image, otherwise just use the first image in the array
                 const coverImage = space.terrace_images?.find(img => img.is_cover)?.image_url 
                                 || space.terrace_images?.[0]?.image_url;
+                
+                const cardColor = CARD_COLORS[index % CARD_COLORS.length];
 
                 return (
                   <div 
                     key={space.id} 
                     onClick={() => navigate(`/space/${space.id}`)}
-                    className="group cursor-pointer flex flex-col"
+                    className="w-full rounded-2xl border-3 border-black shadow-neo overflow-hidden flex flex-col transition-transform hover:-translate-y-1 hover:shadow-neo-lg cursor-pointer bg-neo-surface"
                   >
                     {/* Image Card */}
-                    <div className="relative aspect-[4/3] rounded-2xl overflow-hidden mb-3 bg-[#1e3a28] border border-[#1e3a28] group-hover:border-[#4ade80]/50 transition-colors">
-                      <button className="absolute top-3 right-3 p-2 bg-black/30 backdrop-blur-md hover:bg-black/60 rounded-full z-10 text-white transition-all">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
+                    <div className="relative aspect-[4/3] border-b-3 border-black bg-neo-surface flex items-center justify-center overflow-hidden">
+                      <button className="absolute top-3 right-3 bg-neo-surface border-2 border-black rounded-full p-2 shadow-neo-sm active:translate-x-1 active:translate-y-1 active:shadow-none z-10 transition-all text-black">
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg>
                       </button>
+                      
                       {coverImage ? (
-                        <img src={coverImage} alt={space.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
+                        <img src={coverImage} alt={space.title} className="w-full h-full object-cover hover:scale-105 transition-transform duration-500" />
                       ) : (
-                        <div className="w-full h-full flex items-center justify-center text-[#2a4f32] text-5xl group-hover:scale-105 transition-transform duration-700">⛰️</div>
+                        <div className="w-full h-full flex items-center justify-center bg-gray-100 text-5xl">⛰️</div>
                       )}
                     </div>
                     
                     {/* Info Section */}
-                    <div className="flex justify-between items-start">
-                      <div className="pr-4">
-                        <h3 className="font-semibold text-base truncate text-gray-100">{space.city}, India</h3>
-                        <p className="text-[#9ca89e] text-sm mt-0.5 truncate">{space.title}</p>
-                        <p className="text-[#6b7c6e] text-xs mt-1 flex items-center gap-1">
-                          <Users size={12} /> Up to {space.max_capacity} guests
+                    <div className={`${cardColor} p-4 flex-1 flex flex-col justify-between`}>
+                      <div>
+                        <p className="text-xs text-black flex items-center gap-1 opacity-90 font-inter font-bold uppercase tracking-wider mb-1">
+                          <MapPin size={12} strokeWidth={3} /> {space.city}
+                        </p>
+                        <h3 className="font-jakarta font-bold text-lg truncate text-black">{space.title}</h3>
+                        <p className="text-black font-inter font-semibold text-xs mt-1 flex items-center gap-1 opacity-80">
+                          <Users size={12} strokeWidth={2.5} /> Up to {space.max_capacity} guests
                         </p>
                       </div>
-                      <div className="flex items-center gap-1 text-sm shrink-0">
-                        <Star size={14} className="text-[#4ade80] fill-[#4ade80]" />
-                        <span className="text-gray-200">4.9</span>
+                      
+                      <div className="flex justify-between items-end mt-4">
+                        <div className="flex flex-col">
+                           <span className="border-2 border-black bg-neo-surface rounded-md px-2 py-1 text-neo-green font-lexend font-black text-sm shadow-neo-sm w-max">
+                            ₹{rate}/hr
+                          </span>
+                        </div>
+                        <div className="font-inter font-black text-sm flex items-center gap-1 text-black bg-neo-surface border-2 border-black px-2 py-1 rounded-md shadow-neo-sm">
+                          <span className="text-yellow-400">⭐</span> 4.9
+                        </div>
                       </div>
-                    </div>
-                    <div className="mt-2">
-                      <span className="text-[#4ade80] font-semibold">₹{rate}</span>
-                      <span className="text-[#6b7c6e] text-sm"> / hr</span>
                     </div>
                   </div>
                 )
@@ -258,7 +258,7 @@ export default function HomePage() {
             )}
           </div>
         )}
-      </main>
+      </main> 
     </div>
   );
 }

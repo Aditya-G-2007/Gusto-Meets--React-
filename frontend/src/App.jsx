@@ -1,88 +1,86 @@
-import React, { useEffect, useState } from "react";
-import { Routes, Route, Navigate } from "react-router-dom";
-import { onAuthStateChanged } from "firebase/auth";
-import { auth } from "./firebase.js"; 
+import React, { useEffect, useState } from 'react';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { onAuthStateChanged } from 'firebase/auth';
+import LoginPage from './LoginPage';
+// Make sure these paths match exactly how you named your config files!
+import { auth } from "./firebase";
+import { supabase } from './supabaseClient';
 
 // Import your pages
-// (Make sure you actually created HomePage.jsx and DetailsPage.jsx from our previous steps!)
-import LoginPage from "./LoginPage.jsx";  
-import HomePage from "./HomePage.jsx"; 
-import DetailsPage from "./DetailsPage.jsx";
+import HomePage from './HomePage';
+import DetailsPage from './DetailsPage';
 
-// ---------------------------------------------------------
-// 1. A mini-component to act as a "Bouncer" for private routes
-// ---------------------------------------------------------
-const ProtectedRoute = ({ user, children }) => {
-  if (!user) {
-    // If they aren't logged in, kick them back to login page
-    return <Navigate to="/login" replace />;
-  }
-  // If they are logged in, let them see the page
-  return children;
-};
-
-// ---------------------------------------------------------
-// 2. The Main App Component
-// ---------------------------------------------------------
-function App() {
-  const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true); // Prevents flickering while Firebase checks status
+export default function App() {
+  const [currentUser, setCurrentUser] = useState(null);
+  const [isAuthLoading, setIsAuthLoading] = useState(true);
 
   useEffect(() => {
-    // This listener watches Firebase constantly. 
-    // The moment you log in via Google, this fires and updates the 'user' state.
-    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-      console.log("Auth State Changed! User is:", currentUser ? currentUser.email : "Not logged in");
-      setUser(currentUser);
-      setLoading(false);
+    // This listens for Firebase login/logout events
+    const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
+      
+      console.log("Auth State Changed! User is:", firebaseUser?.email || "None");
+      setCurrentUser(firebaseUser);
+
+      // === NEW SUPABASE SYNC LOGIC ===
+      if (firebaseUser) {
+        const { error } = await supabase
+          .from('authenticated_users')
+          .upsert(
+            { 
+              firebase_uid: firebaseUser.uid,
+              email: firebaseUser.email,
+              role: 'GUEST'
+            }, 
+            { 
+              onConflict: 'firebase_uid', 
+              ignoreDuplicates: true // Will safely ignore if they already exist
+            }
+          );
+
+        if (error) {
+          console.error("🔴 Error syncing user to Supabase:", error);
+        } else {
+          console.log("🍏 User successfully synced to Supabase with UID!");
+        }
+      }
+      // ===============================
+
+      setIsAuthLoading(false);
     });
 
-    // Cleanup the listener when the app closes
+    // Cleanup subscription on unmount
     return () => unsubscribe();
   }, []);
 
-  // Show a dark loading screen while Firebase is figuring out if you are logged in
-  if (loading) {
+  // Design Update: Neobrutalist Loading Screen
+  if (isAuthLoading) {
     return (
-      <div className="min-h-screen bg-[#0e1a12] flex items-center justify-center">
-        <p className="text-[#4ade80]">Loading Gusto Meets...</p>
+      <div className="min-h-screen bg-neo-bg flex items-center justify-center">
+        <div className="border-3 border-black bg-neo-surface px-8 py-6 rounded-xl shadow-neo flex flex-col items-center gap-4">
+          <svg className="w-8 h-8 text-neo-green animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+          <h1 className="font-jakarta font-extrabold text-xl text-black">Loading Gusto Meets...</h1>
+        </div>
       </div>
     );
   }
 
+  // Design Update: Added the Neobrutalist container wrapper
   return (
-    // Note: We don't need <BrowserRouter> here because you already put it in main.jsx!
-    <Routes>
-      
-      {/* LOGIN ROUTE */}
-      {/* If the user is already logged in, redirect them away from the login page to Home */}
-      <Route 
-        path="/login" 
-        element={user ? <Navigate to="/" replace /> : <LoginPage />} 
-      />
-      
-      {/* HOME ROUTE (Protected) */}
-      <Route 
-        path="/" 
-        element={
-          <ProtectedRoute user={user}>
-            <HomePage />
-          </ProtectedRoute>
-        } 
-      />
-
-      {/* SPACE DETAILS ROUTE (Protected) */}
-      <Route 
-        path="/space/:id" 
-        element={
-          <ProtectedRoute user={user}>
-            <DetailsPage />
-          </ProtectedRoute>
-        } 
-      />
-
-    </Routes>
+    <div className="min-h-screen bg-neo-bg text-black relative pb-24">
+      <Routes>
+        {/* Protected Routes: Only show if currentUser exists, otherwise redirect */}
+        <Route 
+          path="/" 
+          element={currentUser ? <HomePage /> : <Navigate to="/login" />} 
+        />
+        
+        <Route 
+          path="/space/:id" 
+          element={currentUser ? <DetailsPage /> : <Navigate to="/login" />} 
+        />
+        
+        <Route path="/login" element={<LoginPage />} /> 
+      </Routes>
+    </div>
   );
 }
-
-export default App;

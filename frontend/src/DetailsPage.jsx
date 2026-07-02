@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { supabase } from './supabaseClient'; // Ensure this points to your client file
+import { supabase } from './supabaseClient'; 
 import { MapPin, Users, Star, CheckCircle2, XCircle, ChevronLeft, ChevronRight } from 'lucide-react';
 
 // ==========================================
@@ -25,18 +25,18 @@ function CalendarPicker({ selectedDate, onSelectDate }) {
   const isPast = (d) => d < today;
 
   return (
-    <div className="bg-[#142a1c] border border-[#2a4a34] rounded-xl p-4 w-72 shadow-2xl absolute top-full left-0 mt-2 z-50">
+    <div className="bg-neo-surface border-3 border-black rounded-xl p-4 w-72 shadow-neo absolute top-full left-0 mt-2 z-50">
       <div className="flex items-center justify-between mb-4">
-        <button onClick={prevMonth} className="p-1.5 rounded-lg text-[#7fbd9a] hover:bg-[#0d1f15] transition-colors"><ChevronLeft size={18} /></button>
-        <span className="text-white text-sm font-medium">{MONTHS[viewDate.getMonth()]} {viewDate.getFullYear()}</span>
-        <button onClick={nextMonth} className="p-1.5 rounded-lg text-[#7fbd9a] hover:bg-[#0d1f15] transition-colors"><ChevronRight size={18} /></button>
+        <button onClick={prevMonth} className="p-1.5 border-2 border-transparent hover:border-black rounded-lg text-black transition-all active:translate-y-[1px]"><ChevronLeft size={18} strokeWidth={2.5} /></button>
+        <span className="text-black text-sm font-lexend font-bold uppercase tracking-wide">{MONTHS[viewDate.getMonth()]} {viewDate.getFullYear()}</span>
+        <button onClick={nextMonth} className="p-1.5 border-2 border-transparent hover:border-black rounded-lg text-black transition-all active:translate-y-[1px]"><ChevronRight size={18} strokeWidth={2.5} /></button>
       </div>
 
       <div className="grid grid-cols-7 mb-2">
-        {DAYS.map((d) => <div key={d} className="text-center text-[11px] text-[#7fbd9a] py-1">{d}</div>)}
+        {DAYS.map((d) => <div key={d} className="text-center text-xs font-lexend font-bold text-gray-500 py-1">{d}</div>)}
       </div>
 
-      <div className="grid grid-cols-7 gap-y-1">
+      <div className="grid grid-cols-7 gap-y-1 gap-x-1">
         {Array.from({ length: firstDayOfMonth }).map((_, i) => <div key={`empty-${i}`} />)}
         {Array.from({ length: daysInMonth }).map((_, i) => {
           const day = i + 1;
@@ -50,8 +50,11 @@ function CalendarPicker({ selectedDate, onSelectDate }) {
               key={day}
               disabled={past}
               onClick={() => onSelectDate(date)}
-              className={`aspect-square flex items-center justify-center rounded-lg text-sm transition-all mx-0.5 
-                ${isSel ? "bg-[#4ade80] text-[#0a1a0e] font-medium" : isToday ? "border border-[#4ade80] text-[#4ade80]" : past ? "text-[#2a4a34] cursor-not-allowed" : "text-gray-300 hover:bg-[#0d1f15] cursor-pointer"}`}
+              className={`aspect-square flex items-center justify-center rounded-lg text-sm font-lexend font-bold transition-all border-2 
+                ${isSel ? "bg-neo-green text-black border-black shadow-neo-sm" 
+                : isToday ? "border-black text-black bg-gray-100" 
+                : past ? "text-gray-400 border-transparent cursor-not-allowed" 
+                : "text-black border-transparent hover:border-black cursor-pointer active:translate-y-[1px]"}`}
             >
               {day}
             </button>
@@ -79,13 +82,13 @@ function TimeSlotPicker({ bookedSlots, selSlot, setSelSlot, selDur, setSelDur, o
   }));
 
   return (
-    <div className="bg-[#142a1c] border border-[#2a4a34] rounded-xl p-5 w-80 shadow-2xl absolute top-full right-0 mt-2 z-50">
-      <div className="flex gap-4 mb-4 justify-center">
-        <span className="flex items-center gap-1 text-[10px] text-gray-400"><span className="w-2 h-2 rounded-full bg-[#4ade80]" /> Available</span>
-        <span className="flex items-center gap-1 text-[10px] text-gray-400"><span className="w-2 h-2 rounded-full bg-[#f87171]" /> Occupied</span>
+    <div className="bg-neo-surface border-3 border-black rounded-xl p-5 w-80 shadow-neo absolute top-full right-0 mt-2 z-50">
+      <div className="flex gap-4 mb-4 justify-center font-lexend font-bold">
+        <span className="flex items-center gap-1 text-[10px] text-black"><span className="w-2.5 h-2.5 rounded-full bg-neo-green border border-black" /> Available</span>
+        <span className="flex items-center gap-1 text-[10px] text-black"><span className="w-2.5 h-2.5 rounded-full bg-neo-pink border border-black" /> Occupied</span>
       </div>
 
-      <div className="grid grid-cols-2 gap-2 mb-4 max-h-48 overflow-y-auto scrollbar-hide pr-1">
+      <div className="grid grid-cols-2 gap-2 mb-4 max-h-48 overflow-y-auto no-scrollbar pr-1">
         {slots.map((slot) => {
           const isSel = selSlot === slot.time;
           return (
@@ -93,27 +96,27 @@ function TimeSlotPicker({ bookedSlots, selSlot, setSelSlot, selDur, setSelDur, o
               key={slot.time}
               disabled={slot.occupied}
               onClick={() => setSelSlot(slot.time)}
-              className={`flex items-center gap-2 px-3 py-2 rounded-lg border text-left w-full transition-all text-xs
-                ${slot.occupied ? "bg-[#2a1315] border-[#f87171]/50 cursor-not-allowed opacity-60" 
-                : isSel ? "bg-[#0a2e12] border-[#4ade80]" : "bg-[#0d1f15] border-[#2a4a34] cursor-pointer hover:border-[#4ade80]/50"}`}
+              className={`flex items-center gap-2 px-3 py-2 rounded-lg border-2 text-left w-full transition-all text-xs font-lexend font-bold
+                ${slot.occupied ? "bg-gray-100 border-gray-300 text-gray-400 cursor-not-allowed line-through" 
+                : isSel ? "bg-neo-green border-black shadow-neo-sm" : "bg-white border-black text-black cursor-pointer hover:bg-gray-100 active:translate-y-[1px]"}`}
             >
-              <span className={`w-2 h-2 rounded-full flex-shrink-0 ${slot.occupied ? "bg-[#f87171]" : "bg-[#4ade80]"} ${isSel ? "ring-2 ring-white" : ""}`} />
-              <span className={slot.occupied ? "text-[#f87171]" : isSel ? "text-[#4ade80]" : "text-gray-300"}>{slot.time}</span>
+              <span className={`w-2.5 h-2.5 rounded-full flex-shrink-0 border border-black ${slot.occupied ? "bg-gray-300" : isSel ? "bg-white" : "bg-neo-green"}`} />
+              <span>{slot.time}</span>
             </button>
           );
         })}
       </div>
 
       {selSlot && (
-        <div className="border-t border-[#2a4a34] pt-4 mt-2">
-          <p className="text-[10px] text-[#7fbd9a] mb-2 uppercase tracking-wide">Duration</p>
+        <div className="border-t-3 border-black pt-4 mt-2">
+          <p className="text-[10px] text-black font-lexend font-extrabold mb-2 uppercase tracking-wide">Duration</p>
           <div className="flex gap-2">
             {DURATIONS.map((d) => (
               <button
                 key={d}
                 onClick={() => { setSelDur(d); onClose(); }}
-                className={`flex-1 py-1.5 rounded-lg text-xs border transition-all
-                  ${selDur === d ? "bg-[#4ade80] text-[#0a1a0e] border-[#4ade80]" : "bg-[#0d1f15] text-gray-300 border-[#2a4a34] hover:border-[#4ade80]/50"}`}
+                className={`flex-1 py-1.5 rounded-lg text-xs font-lexend font-bold border-2 transition-all active:translate-y-[1px]
+                  ${selDur === d ? "bg-neo-green text-black border-black shadow-neo-sm" : "bg-white text-black border-black hover:bg-gray-100"}`}
               >
                 {d}hr
               </button>
@@ -206,8 +209,14 @@ export default function DetailsPage() {
     alert(`Processing Reservation for ${selectedDate.toDateString()} at ${selectedTime} for ${selectedDuration} hours.`);
   };
 
-  if (loading) return <div className="min-h-screen bg-[#0e1a12] text-white pl-64 pt-20 text-center">Loading details...</div>;
-  if (!space) return <div className="min-h-screen bg-[#0e1a12] text-white pl-64 pt-20 text-center">Space not found.</div>;
+  if (loading) return (
+    <div className="min-h-screen bg-neo-bg text-black flex items-center justify-center font-jakarta font-bold text-xl">
+       <svg className="w-8 h-8 text-neo-green animate-spin mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+      Loading details...
+    </div>
+  );
+  
+  if (!space) return <div className="min-h-screen bg-neo-bg text-black flex items-center justify-center font-jakarta font-bold text-xl">Space not found.</div>;
 
   const rate = space.terrace_rates?.[0]?.rate || 0;
   const permissions = space.terrace_permissions?.[0] || {};
@@ -215,77 +224,90 @@ export default function DetailsPage() {
   const totalPrice = rate * selectedDuration;
 
   return (
-    <div className="min-h-screen bg-[#0e1a12] flex font-sans">
+    <div className="min-h-screen bg-neo-bg flex font-inter text-black pb-24">
       
-      {/* Assuming Sidebar is outside your routing or handled by a layout wrapper. 
-          If you don't have a Sidebar component, just remove this line. */}
+      {/* Assuming Sidebar is outside your routing or handled by a layout wrapper. */}
       {/* <Sidebar /> */}
 
-      <main className="flex-1 ml-0 lg:ml-64 p-8 lg:p-12 text-white max-w-7xl mx-auto">
+      <main className="flex-1 ml-0 lg:ml-64 p-8 lg:p-12 max-w-7xl mx-auto">
+        
+        {/* Navigation Back */}
+        <button 
+          onClick={() => navigate(-1)}
+          className="mb-6 flex items-center gap-2 font-lexend font-bold text-sm border-2 border-black bg-neo-surface px-4 py-2 rounded-lg shadow-neo-sm active:translate-y-1 active:shadow-none transition-all w-max"
+        >
+          <ChevronLeft size={16} strokeWidth={3} /> Back to explore
+        </button>
+
         <div className="mb-6 flex justify-between items-end">
           <div>
-            <h1 className="text-3xl font-semibold mb-2">{space.title}</h1>
-            <div className="flex items-center gap-4 text-sm text-gray-300">
-              <span className="flex items-center gap-1 font-medium"><Star size={16} className="text-yellow-500 fill-yellow-500" /> 4.9</span>
-              <span className="underline cursor-pointer">11 Reviews</span>
-              <span className="flex items-center gap-1"><MapPin size={16}/> {space.address_line}, {space.city}</span>
+            <h1 className="text-[40px] font-jakarta font-extrabold leading-tight mb-2 tracking-tight">{space.title}</h1>
+            <div className="flex items-center gap-4 text-sm font-inter font-semibold text-gray-700">
+              <span className="flex items-center gap-1 font-bold text-black bg-neo-surface border-2 border-black px-2 py-0.5 rounded shadow-neo-sm"><Star size={14} className="text-yellow-400 fill-yellow-400" /> 4.9</span>
+              <span className="underline cursor-pointer hover:text-black">11 Reviews</span>
+              <span className="flex items-center gap-1"><MapPin size={16} strokeWidth={2.5}/> {space.address_line}, {space.city}</span>
             </div>
           </div>
         </div>
 
         {/* Gallery */}
-        <div className="grid grid-cols-4 grid-rows-2 gap-2 h-[400px] mb-12 rounded-2xl overflow-hidden">
-          <div className="col-span-2 row-span-2 bg-[#1e3a28]">
+        <div className="grid grid-cols-4 grid-rows-2 gap-3 h-[400px] mb-12 rounded-2xl overflow-hidden border-3 border-black shadow-neo bg-neo-surface p-2">
+          <div className="col-span-2 row-span-2 bg-gray-100 rounded-xl overflow-hidden border-2 border-black">
              {images[0] ? <img src={images[0].image_url} alt="Cover" className="w-full h-full object-cover" /> : <div className="w-full h-full flex items-center justify-center text-4xl">⛰️</div>}
           </div>
-          <div className="col-span-1 row-span-1 bg-[#2a3f32]">{images[1] && <img src={images[1].image_url} alt="Gallery 1" className="w-full h-full object-cover" />}</div>
-          <div className="col-span-1 row-span-1 bg-[#1e3a28]">{images[2] && <img src={images[2].image_url} alt="Gallery 2" className="w-full h-full object-cover" />}</div>
-          <div className="col-span-2 row-span-1 bg-[#2a3f32]">{images[3] && <img src={images[3].image_url} alt="Gallery 3" className="w-full h-full object-cover" />}</div>
+          <div className="col-span-1 row-span-1 bg-gray-100 rounded-xl overflow-hidden border-2 border-black">{images[1] ? <img src={images[1].image_url} alt="Gallery 1" className="w-full h-full object-cover" /> : <div className="w-full h-full flex items-center justify-center text-2xl">⛰️</div>}</div>
+          <div className="col-span-1 row-span-1 bg-gray-100 rounded-xl overflow-hidden border-2 border-black">{images[2] ? <img src={images[2].image_url} alt="Gallery 2" className="w-full h-full object-cover" /> : <div className="w-full h-full flex items-center justify-center text-2xl">⛰️</div>}</div>
+          <div className="col-span-2 row-span-1 bg-gray-100 rounded-xl overflow-hidden border-2 border-black">{images[3] ? <img src={images[3].image_url} alt="Gallery 3" className="w-full h-full object-cover" /> : <div className="w-full h-full flex items-center justify-center text-3xl">⛰️</div>}</div>
         </div>
 
         <div className="flex flex-col lg:flex-row gap-12">
           
           <div className="flex-1">
-            <h2 className="text-2xl font-semibold mb-2">Entire Space hosted by Gusto</h2>
-            <p className="text-gray-400 mb-6 flex items-center gap-2"><Users size={18} /> Up to {space.max_capacity} guests</p>
-            <div className="w-full h-px bg-[#1e3a28] mb-8" />
-            <h3 className="text-xl font-medium mb-4">About this space</h3>
-            <p className="text-gray-300 leading-relaxed mb-8">{space.description}</p>
-            <div className="w-full h-px bg-[#1e3a28] mb-8" />
-            <h3 className="text-xl font-medium mb-4">House Rules</h3>
+            <h2 className="text-2xl font-jakarta font-extrabold mb-2">Entire Space hosted by Gusto</h2>
+            <p className="font-inter font-semibold text-gray-700 mb-6 flex items-center gap-2"><Users size={18} strokeWidth={2.5} /> Up to {space.max_capacity} guests</p>
+            <div className="w-full h-[3px] bg-black mb-8" />
+            
+            <h3 className="text-xl font-jakarta font-extrabold mb-4">About this space</h3>
+            <p className="font-inter font-medium text-gray-800 leading-relaxed mb-8 text-base">{space.description}</p>
+            
+            <div className="w-full h-[3px] bg-black mb-8" />
+            
+            <h3 className="text-xl font-jakarta font-extrabold mb-4">House Rules</h3>
             <div className="grid grid-cols-2 gap-4 mb-8">
-              <div className={`flex items-center gap-2 p-3 rounded-xl border ${permissions.allow_alcohol ? 'border-green-900/50 text-green-400' : 'border-red-900/30 text-red-400'}`}>
-                {permissions.allow_alcohol ? <CheckCircle2 size={18} /> : <XCircle size={18} />} <span className="text-sm">Alcohol</span>
+              <div className={`flex items-center gap-2 p-3.5 rounded-xl border-3 border-black shadow-neo-sm font-lexend font-bold text-sm ${permissions.allow_alcohol ? 'bg-neo-green text-black' : 'bg-neo-pink text-black'}`}>
+                {permissions.allow_alcohol ? <CheckCircle2 size={20} strokeWidth={2.5} /> : <XCircle size={20} strokeWidth={2.5} />} <span>Alcohol</span>
               </div>
-              <div className={`flex items-center gap-2 p-3 rounded-xl border ${permissions.allow_smoking ? 'border-green-900/50 text-green-400' : 'border-red-900/30 text-red-400'}`}>
-                {permissions.allow_smoking ? <CheckCircle2 size={18} /> : <XCircle size={18} />} <span className="text-sm">Smoking</span>
+              <div className={`flex items-center gap-2 p-3.5 rounded-xl border-3 border-black shadow-neo-sm font-lexend font-bold text-sm ${permissions.allow_smoking ? 'bg-neo-green text-black' : 'bg-neo-pink text-black'}`}>
+                {permissions.allow_smoking ? <CheckCircle2 size={20} strokeWidth={2.5} /> : <XCircle size={20} strokeWidth={2.5} />} <span>Smoking</span>
               </div>
-              <div className={`flex items-center gap-2 p-3 rounded-xl border ${permissions.allow_loud_music ? 'border-green-900/50 text-green-400' : 'border-red-900/30 text-red-400'}`}>
-                {permissions.allow_loud_music ? <CheckCircle2 size={18} /> : <XCircle size={18} />} <span className="text-sm">Loud Music</span>
+              <div className={`flex items-center gap-2 p-3.5 rounded-xl border-3 border-black shadow-neo-sm font-lexend font-bold text-sm ${permissions.allow_loud_music ? 'bg-neo-green text-black' : 'bg-neo-pink text-black'}`}>
+                {permissions.allow_loud_music ? <CheckCircle2 size={20} strokeWidth={2.5} /> : <XCircle size={20} strokeWidth={2.5} />} <span>Loud Music</span>
               </div>
-              <div className={`flex items-center gap-2 p-3 rounded-xl border ${permissions.allow_outside_food ? 'border-green-900/50 text-green-400' : 'border-red-900/30 text-red-400'}`}>
-                {permissions.allow_outside_food ? <CheckCircle2 size={18} /> : <XCircle size={18} />} <span className="text-sm">Outside Food</span>
+              <div className={`flex items-center gap-2 p-3.5 rounded-xl border-3 border-black shadow-neo-sm font-lexend font-bold text-sm ${permissions.allow_outside_food ? 'bg-neo-green text-black' : 'bg-neo-pink text-black'}`}>
+                {permissions.allow_outside_food ? <CheckCircle2 size={20} strokeWidth={2.5} /> : <XCircle size={20} strokeWidth={2.5} />} <span>Outside Food</span>
               </div>
             </div>
           </div>
 
           {/* Right Column: Sticky Booking Card */}
-          <div className="w-full lg:w-[400px]">
-            <div className="sticky top-8 bg-[#141f17] border border-[#1e3a28] rounded-2xl p-6 shadow-2xl">
-              <div className="mb-6">
-                <span className="text-2xl font-semibold text-[#4ade80]">₹{rate}</span>
-                <span className="text-gray-400"> / hr</span>
+          <div className="w-full lg:w-[420px]">
+            <div className="sticky top-8 bg-neo-surface border-3 border-black rounded-2xl p-7 shadow-neo-lg">
+              <div className="mb-6 flex items-end gap-1">
+                <span className="text-3xl font-lexend font-extrabold text-black">₹{rate}</span>
+                <span className="font-lexend font-bold text-gray-500 pb-1"> / hr</span>
               </div>
 
-              {/* Popups Container */}
-              <div className="relative border border-[#1e3a28] rounded-xl mb-4" ref={dropdownRef}>
-                <div className="flex">
+              {/* Popups Container (Fixed overflow issue here!) */}
+              <div className="relative mb-4" ref={dropdownRef}>
+                
+                {/* The Visible Buttons */}
+                <div className="flex bg-white border-3 border-black rounded-xl shadow-neo-sm overflow-hidden">
                   <div 
                     onClick={() => setActivePopup(activePopup === 'date' ? null : 'date')}
-                    className={`flex-1 p-3 border-r border-[#1e3a28] hover:bg-[#1e3a28] transition-colors cursor-pointer rounded-l-xl ${activePopup === 'date' ? 'ring-2 ring-[#4ade80]' : ''}`}
+                    className={`flex-1 p-3 border-r-3 border-black hover:bg-neo-green transition-colors cursor-pointer ${activePopup === 'date' ? 'bg-neo-green' : ''}`}
                   >
-                    <span className="block text-[10px] font-bold uppercase text-gray-400 mb-1">Date</span>
-                    <span className={`text-sm ${selectedDate ? 'text-white' : 'text-gray-500'}`}>
+                    <span className="block text-[10px] font-lexend font-extrabold uppercase text-gray-600 mb-1">Date</span>
+                    <span className={`text-sm font-lexend font-bold ${selectedDate ? 'text-black' : 'text-gray-400'}`}>
                       {selectedDate ? selectedDate.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }) : 'Add date'}
                     </span>
                   </div>
@@ -295,15 +317,16 @@ export default function DetailsPage() {
                       if (!selectedDate) alert("Please select a date first!");
                       else setActivePopup(activePopup === 'time' ? null : 'time');
                     }}
-                    className={`flex-1 p-3 hover:bg-[#1e3a28] transition-colors cursor-pointer rounded-r-xl ${activePopup === 'time' ? 'ring-2 ring-[#4ade80]' : ''}`}
+                    className={`flex-1 p-3 hover:bg-neo-green transition-colors cursor-pointer ${activePopup === 'time' ? 'bg-neo-green' : ''}`}
                   >
-                    <span className="block text-[10px] font-bold uppercase text-gray-400 mb-1">Time</span>
-                    <span className={`text-sm ${selectedTime ? 'text-white' : 'text-gray-500'}`}>
+                    <span className="block text-[10px] font-lexend font-extrabold uppercase text-gray-600 mb-1">Time</span>
+                    <span className={`text-sm font-lexend font-bold ${selectedTime ? 'text-black' : 'text-gray-400'}`}>
                       {selectedTime ? `${selectedTime} (${selectedDuration}hr)` : 'Select slot'}
                     </span>
                   </div>
                 </div>
 
+                {/* The Dropdown Popups */}
                 {activePopup === 'date' && (
                   <CalendarPicker 
                     selectedDate={selectedDate} 
@@ -329,33 +352,32 @@ export default function DetailsPage() {
 
               {/* Price Calculation display */}
               {selectedTime && (
-                <div className="flex justify-between text-sm text-gray-300 mb-4 px-1">
+                <div className="flex justify-between font-lexend font-bold text-sm text-gray-600 mb-4 px-1">
                   <span>₹{rate} × {selectedDuration} hour{selectedDuration > 1 ? 's' : ''}</span>
-                  <span className="text-white font-medium">₹{totalPrice}</span>
+                  <span className="text-black text-base border-b-2 border-black">₹{totalPrice}</span>
                 </div>
               )}
 
               {/* Primary Action */}
               <button 
                 onClick={handleReserve} 
-                className="w-full bg-[#4ade80] hover:bg-[#22c55e] text-[#0e1a12] font-semibold text-lg rounded-xl py-4 transition-colors mb-4"
+                className="w-full bg-neo-green hover:bg-neo-yellow border-3 border-black shadow-neo text-black font-lexend font-extrabold text-lg rounded-xl py-4 transition-all active:translate-y-1 active:translate-x-1 active:shadow-none mb-4"
               >
                 Reserve
               </button>
               
-              <p className="text-center text-sm text-gray-400 mb-6">
+              <p className="text-center text-sm font-inter font-bold text-gray-500 mb-6">
                 You won't be charged yet
               </p>
 
               {/* Secondary Action: Map Location */}
-              {/* Note: This assumes your Supabase table has geo_lat and geo_lng. If not, fallback to just a map link using the city */}
               <a 
-                href={space.geo_lat && space.geo_lng ? `https://www.google.com/maps/search/?api=1&query=${space.geo_lat},${space.geo_lng}` : `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(space.address_line + ', ' + space.city)}`}
+                href={space.geo_lat && space.geo_lng ? `https://maps.google.com/?q=${space.geo_lat},${space.geo_lng}` : `https://maps.google.com/?q=${encodeURIComponent(space.address_line + ', ' + space.city)}`}
                 target="_blank" 
                 rel="noopener noreferrer"
-                className="w-full flex items-center justify-center gap-2 bg-transparent border border-[#2a4a34] hover:border-[#4ade80] text-gray-200 font-semibold text-lg rounded-xl py-4 transition-colors group"
+                className="w-full flex items-center justify-center gap-2 bg-neo-surface border-3 border-black shadow-neo-sm hover:bg-gray-100 text-black font-lexend font-extrabold text-lg rounded-xl py-3.5 transition-all active:translate-y-[1px] active:translate-x-[1px] active:shadow-none group"
               >
-                <MapPin size={20} className="text-[#4ade80] group-hover:scale-110 transition-transform" />
+                <MapPin size={22} strokeWidth={2.5} className="text-black group-hover:scale-110 transition-transform" />
                 View on Map
               </a>
 

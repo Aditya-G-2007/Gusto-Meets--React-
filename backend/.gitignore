@@ -18,7 +18,7 @@ yarn-error.log*
 # Build outputs (If you ever use TypeScript or bundlers later)
 dist/
 build/
-serviceAccountKey.json
+**/serviceAccountKey.json 
 # OS generated files
 .DS_Store
 Thumbs.dbx 
